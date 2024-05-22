@@ -1,0 +1,20 @@
+{
+  "name": "saphirangel/curl_converter",
+  "description": "convert curl command to different format",
+  "require": {
+    "ext-http": "*",
+    "clue/arguments": "^2.1",
+    "nyholm/psr7": "^1.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "CurlConverter\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Rémi MOINAS",
+      "email": "rmoinas@ringover.com"
+    }
+  ]
+}
