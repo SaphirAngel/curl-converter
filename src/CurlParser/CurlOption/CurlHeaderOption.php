@@ -24,7 +24,7 @@ class CurlHeaderOption extends AbstractCurlOption
         $this->headerParser = new Parser();
     }
 
-    public function getProcessedValue(mixed $rawValue = null): mixed
+    public function getProcessedValue(mixed $rawValue = null): ?array
     {
         $this->headerParser->parse($rawValue, Parser::CLEANUP, $parsedHeader);
 

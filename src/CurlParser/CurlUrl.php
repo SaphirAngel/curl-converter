@@ -2,7 +2,10 @@
 
 namespace CurlConverter\CurlParser;
 
-class CurlUrl implements \JsonSerializable
+use CurlConverter\Exception\NotValidCurlUrlException;
+use JsonSerializable;
+
+class CurlUrl implements JsonSerializable
 {
     private string $url;
     private string $rawUrl;
@@ -10,6 +13,25 @@ class CurlUrl implements \JsonSerializable
     private array $queryParams = [];
     private ?array $authCredentials = null;
     private ?string $authType = null;
+
+    /**
+     * @throws NotValidCurlUrlException
+     */
+    public static function fromJson(array $rawCurlUrl): CurlUrl
+    {
+        if (empty($rawCurlUrl['url']) || empty($rawCurlUrl['raw_url'])) {
+            throw new NotValidCurlUrlException("Impossible de construire l'objet CurlUrl. <url> ou <raw_url> manquant");
+        }
+
+        $curlUrl = new self();
+        $curlUrl->url = $rawCurlUrl['url'];
+        $curlUrl->rawUrl = $rawCurlUrl['raw_url'];
+        $curlUrl->fragments = $rawCurlUrl['fragments'] ?? null;
+        $curlUrl->queryParams = $rawCurlUrl['query_params'] ?? [];
+        $curlUrl->authCredentials = $rawCurlUrl['auth_credentials'] ?? null;
+        $curlUrl->authType = $rawCurlUrl['auth_type'] ?? null;
+        return $curlUrl;
+    }
 
     public function setUrl(string $rawUrl, string $url): void
     {

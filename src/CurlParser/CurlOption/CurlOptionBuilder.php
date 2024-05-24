@@ -2,9 +2,7 @@
 
 namespace CurlConverter\CurlParser\CurlOption;
 
-use CurlConverter\CurlParser\OptionProcessor\HeaderProcessor;
-use CurlConverter\CurlParser\OptionProcessor\ProcessorBuilder;
-use Exception;
+use Exception\CurlArgumentNotFound;
 
 class CurlOptionBuilder
 {
@@ -1862,26 +1860,26 @@ class CurlOptionBuilder
     ];
 
     /**
-     * @throws Exception
+     * @throws CurlArgumentNotFound
      */
     public static function getDetailsForShortOptionName(string $shortOptionName): ?AbstractCurlOption
     {
         $optionName = self::$shortOptionToLongOptionNames[$shortOptionName] ?? null;
 
         if (empty($optionName)) {
-            throw new Exception("Unknown short option name");
+            throw new CurlArgumentNotFound("Unknown short option name");
         }
 
         return self::getOption($optionName);
     }
 
     /**
-     * @throws Exception
+     * @throws CurlArgumentNotFound
      */
     public static function getOption(string $optionName): ?AbstractCurlOption
     {
         if (empty(self::$longOptionsDetails[$optionName])) {
-            throw new Exception("Unknown option name");
+            throw new CurlArgumentNotFound("Unknown option name");
         }
 
         if (!empty(self::$longOptionsDetails[$optionName]['processor'])) {

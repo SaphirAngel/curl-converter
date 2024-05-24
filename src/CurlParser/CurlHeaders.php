@@ -2,9 +2,11 @@
 
 namespace CurlConverter\CurlParser;
 
-class CurlHeaders implements \JsonSerializable
+use JsonSerializable;
+
+class CurlHeaders implements JsonSerializable
 {
-    private const DEFAULT_CONTENT_TYPE = 'application/x-www-form-urlencoded';
+    private const DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
     private array $semiColonSeparatedHeader = ["Cookie", "Content-Type", "Prefer"];
     private array $commaSeparatedHeader = [
@@ -32,6 +34,18 @@ class CurlHeaders implements \JsonSerializable
 
     private array $headers = [];
     private array $lowerCaseHeaderName = [];
+
+    public static function fromJson(array $rawCurlHeaders): CurlHeaders
+    {
+        $curlHeaders = new self();
+        $curlHeaders->headers = $rawCurlHeaders;
+        $headerNames = array_keys($rawCurlHeaders);
+        foreach ($headerNames as $headerName) {
+            $curlHeaders->lowerCaseHeaderName[strtolower($headerName)] = $headerName;
+        }
+
+        return $curlHeaders;
+    }
 
     public function addHeader(string $headerName, string $headerValue): void
     {
@@ -101,7 +115,7 @@ class CurlHeaders implements \JsonSerializable
         return count($this->headers);
     }
 
-    public function jsonSerialize(): mixed
+    public function getFormatedHeaders(): array
     {
         $formatedHeaderValues = [];
         foreach ($this->headers as $headerName => $headerValue) {
@@ -123,4 +137,8 @@ class CurlHeaders implements \JsonSerializable
         return $formatedHeaderValues;
     }
 
+    public function jsonSerialize(): array
+    {
+        return $this->headers;
+    }
 }

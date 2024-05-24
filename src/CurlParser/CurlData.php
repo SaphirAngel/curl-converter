@@ -2,9 +2,18 @@
 
 namespace CurlConverter\CurlParser;
 
-class CurlData
+use JsonSerializable;
+
+class CurlData implements JsonSerializable
 {
     private array $rawDataList = [];
+
+    public static function fromJson(array $rawCurlData): CurlData
+    {
+        $curlData = new self();
+        $curlData->rawDataList = $rawCurlData;
+        return $curlData;
+    }
 
     public function addRawData(string $rawData): void
     {
@@ -34,5 +43,10 @@ class CurlData
         }
 
         return $parsedData ?? $jointedRawData;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->rawDataList;
     }
 }

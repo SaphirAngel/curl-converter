@@ -7,16 +7,30 @@ use CurlConverter\CurlParser\CurlOption\CurlOptionBuilder;
 use Exception;
 use Exception\CurlArgumentNotFound;
 
-class CurlParser
+class CurlBuilder
 {
     /**
      * @throws CurlArgumentNotFound
      */
-    public function parseAndApplyArgsToRequest(string $curlCommand, CurlRequest $curlRequest): void
+    public function fromCurlCommand(string $curlCommand, CurlRequest $curlRequest = null): CurlRequest
     {
+        if (is_null($curlRequest)) {
+            $curlRequest = new CurlRequest();
+        }
+
         $commandArgs = \Clue\Arguments\split($curlCommand);
         array_shift($commandArgs);
         $this->applyArgsToRequest($commandArgs, $curlRequest);
+
+        return $curlRequest;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function fromJson(array $rawCurlRequest): CurlRequest
+    {
+        return CurlRequest::fromJson($rawCurlRequest);
     }
 
     /**

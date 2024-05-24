@@ -2,9 +2,10 @@
 
 namespace CurlConverter\CurlParser;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Exception;
+use JsonSerializable;
 
-class CurlRequest
+class CurlRequest implements JsonSerializable
 {
     /** @var CurlUrl[] */
     private array $urls = [];
@@ -16,6 +17,26 @@ class CurlRequest
     private array $options = [];
 
     private CurlData $data;
+
+    /**
+     * @throws Exception
+     */
+    public static function fromJson(array $rawCurlRequest): CurlRequest
+    {
+        $curlRequest = new self();
+        foreach ($rawCurlRequest['urls'] as $rawUrl) {
+            $curlRequest->urls[] = CurlUrl::fromJson($rawUrl);
+        }
+
+        $curlRequest->headers = CurlHeaders::fromJson($rawCurlRequest['headers'] ?? []);
+        $curlRequest->data = CurlData::fromJson($rawCurlRequest['data'] ?? []);
+
+        $curlRequest->queryParams = $rawCurlRequest['query_params'] ?? [];
+        $curlRequest->cookies = $rawCurlRequest['cookies'] ?? [];
+        $curlRequest->options = $rawCurlRequest['options'] ?? [];
+
+        return $curlRequest;
+    }
 
     public function __construct()
     {
@@ -33,7 +54,7 @@ class CurlRequest
         $this->cookies[$cookieName] = $cookieValue;
     }
 
-    public function getCookies()
+    public function getCookies(): array
     {
         return $this->cookies;
     }
@@ -79,5 +100,17 @@ class CurlRequest
         }
 
         return $method;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'urls'        => $this->urls,
+            'queryParams' => $this->queryParams,
+            'cookies'     => $this->cookies,
+            'headers'     => $this->headers,
+            'data'        => $this->data,
+            'options'     => $this->options
+        ];
     }
 }
